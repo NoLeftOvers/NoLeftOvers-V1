@@ -8,6 +8,10 @@ jobs:
         name: Create Jira issue
         runs-on: ubuntu-latest
         steps:
+            - name: Debug Login Info
+              run: |
+                echo "JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}"
+                echo "JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}"
             - name: Login
               uses: atlassian/gajira-login@v3
               env:
