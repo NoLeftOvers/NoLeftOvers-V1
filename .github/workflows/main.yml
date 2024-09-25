@@ -4,6 +4,8 @@ name: CI/CD Docker
 on:
   push:
     branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 
 # 환경설정
 env:
