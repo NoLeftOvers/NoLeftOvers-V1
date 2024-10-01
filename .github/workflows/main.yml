@@ -9,7 +9,7 @@ on:
 
 # 환경설정
 env:
-  DOCKER_IMAGE: ghcr.io/${{ github.actor }}/noleftovers-server
+  DOCKER_IMAGE: docker.io/${{ secrets.DOCKER_HUB_USERNAME }}/noleftovers
   VERSION: ${{ github.sha }}
   NAME: go_cicd
 
@@ -32,39 +32,33 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ env.VERSION }}
           restore-keys: |
             ${{ runner.os }}-buildx-
-      # GitHub 컨테이너 레지스트리에 생성한 토큰을 이용해 GHCR에 로그인
-      - name: Login to ghcr
-        uses: docker/login-action@v1
+      # Docker Hub에 로그인
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      # 해당 GHCR로 Docker image를 만들고(build) push
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      # 해당 Docker Hub로 Docker image를 만들고(build) push
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          # 컨텍스트는 Docker가 이미지를 빌드할 때 필요한 파일 및 디렉토리의 집합을 의미 / 파일은 Dockerfile의 경로를 지정
           context: ./backend
-          # file: ./koview-server/Dockerfile.prod
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
+
   # 배포 Job
   deploy:
-  # Deploy는 GHCR에 로그인 후 저장되어 있는 Docker image를 이용해 컨테이너를 실행시키는 역할
-  # runs-on 중 self-hosted는 필수로 써야한다.(이 값을 설정해야 서버에 등록한 runner가 실행된다.) / 이 부분에서 어느 Runner(EC2)로 실행할지 지정해줘야 한다.
     needs: build  # build 후에 실행되도록 정의
     name: Deploy
     runs-on: [ self-hosted, label-go ] # AWS ./configure에서 사용할 label명
     steps:
-      - name: Login to ghcr
-        uses: docker/login-action@v1
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GHCR_TOKEN }}
-      # 3000 -> 80 포트로 수행하도록 지정
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       # 실행 중인 도커 컨테이너를 중지하고 이전 버전인 컨테이너와 이미지를 삭제 후 새로운 이미지로 컨테이너를 run
       - name: Docker run
         run: |
