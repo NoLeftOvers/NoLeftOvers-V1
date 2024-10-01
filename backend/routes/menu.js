@@ -2,6 +2,62 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); // pool 객체를 연결한 파일에서 불러와야 합니다.
 
+/**
+ * @swagger
+ * tags:
+ *   name: Menu
+ *   description: 메뉴 관련
+ */
+
+/**
+ * @swagger
+ * /menu:
+ *   get:
+ *     summary: 오늘의 식단 정보를 가져옵니다.
+ *     tags: [Menu]
+ *     parameters:
+ *       - in: query
+ *         name: restaurantType
+ *         schema:
+ *           type: string
+ *           enum: [gyo, bi, gick]
+ *         required: true
+ *         description: 식당의 종류 (gyo, bi, gick 중 하나)
+ *     responses:
+ *       200:
+ *         description: 오늘의 식단 정보를 가져옵니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   restaurant_type:
+ *                     type: string
+ *                     description: 식당 종류
+ *                     example: gyo
+ *                   day_of_week:
+ *                     type: string
+ *                     description: 요일
+ *                     example: Monday
+ *                   meal_time:
+ *                     type: string
+ *                     description: 식사 시간 (아침, 점심, 저녁 등)
+ *                     example: lunch
+ *                   dishes:
+ *                     type: string
+ *                     description: 제공되는 요리 목록
+ *                     example: 불고기, 비빔밥
+ *                   date:
+ *                     type: string
+ *                     format: date
+ *                     description: 식단 날짜
+ *                     example: 2024-10-01
+ *       500:
+ *         description: 서버 오류로 인해 식단 정보를 가져올 수 없습니다.
+ */
+
 // GET 요청: 오늘 식단 정보를 요청
 router.get('/', (req, res) => {
     const restaurantType = req.query.restaurantType;

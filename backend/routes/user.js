@@ -2,6 +2,13 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db'); // pool 객체를 연결한 파일에서 불러와야 합니다.
 
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: 유저 추가 수정 삭제 조회
+ */
+
 // POST 요청: 유저 데이터를 삽입
 router.post('/register', (req, res) => {
     const { name, nickName, schoolNumber, password } = req.body;
