@@ -4,6 +4,7 @@ const app = express();
 const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
+const imageRoutes = require('./routes/image');
 
 const { swaggerUi, specs } = require('./swagger/swagger');
 
@@ -11,8 +12,9 @@ app.use(express.json());
 
 // API 라우트 설정
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
-app.use('/api/point', pointRoutes); // /api/point/~ 경로로 유저 라우트를 설정
+app.use('/api/point', pointRoutes); // /api/point/~ 경로로 포인트 라우트를 설정
 app.use('/api/menu', menuRoutes); // /api/menu/~ 경로로 식단 라우트를 설정
+app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
