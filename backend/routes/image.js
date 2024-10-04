@@ -37,7 +37,7 @@ const pool = require('../db'); // pool 객체를 연결한 파일에서 불러�
  *           text/plain:
  *             schema:
  *               type: string
- *               example: 'Point added successfully'
+ *               example: 'Image added successfully'
  *       400:
  *         description: 필수 필드 누락으로 인해 요청이 실패했습니다.
  *         content:
