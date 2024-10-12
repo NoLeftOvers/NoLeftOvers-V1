@@ -68,7 +68,7 @@ jobs:
           docker run -d -p 80:8000 --name go_cicd --restart always \
             -e RDS_HOST=${{ secrets.RDS_HOST }} \
             -e RDS_PORT=${{ secrets.RDS_PORT }} \
-            -e RDS_USER=${{ secrets.RDS_USER }} \OPENAI_API_KEY
+            -e RDS_USER=${{ secrets.RDS_USER }} \
             -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
             -e RDS_DB_NAME=${{ secrets.RDS_DB_NAME }} \
             -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
