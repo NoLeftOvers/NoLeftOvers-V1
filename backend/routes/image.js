@@ -74,7 +74,7 @@ function bufferToBase64(buffer) {
     return buffer.toString('base64');
 }
 
-// POST 요청: GPT-4를 통해 이미지 분석
+// POST 요청: GPT-4를 통해 이미지 분석 진행
 router.post('/upload', async (req, res) => {
     const { userId, base64 } = req.body;
 
