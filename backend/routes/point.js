@@ -60,24 +60,27 @@ const pool = require('../db'); // pool 객체를 연결한 파일에서 불러�
 
 // POST 요청: 포인트 데이터를 삽입
 router.post('/add', (req, res) => {
-    const { user_id, point, description } = req.body;
+    // 로그로 요청 데이터 확인
+    console.log(`POST /point/add - Received body: ${JSON.stringify(req.body)}`);
 
-    // 요청 데이터 로그
-    console.log(`POST /point/add - Data received: ${JSON.stringify(req.body)}`);
+    const { userId, point, description } = req.body;
 
-    if (!user_id || !point || !description) {
-        console.log('POST /point/add - Missing required fields');
+    if (!userId || !point || !description) {
+        console.log('POST /point/add - Missing required fields', req.body);
         return res.status(400).send('Missing required fields');
     }
 
-    // 포인트 데이터를 데이터베이스에 삽입하는 SQL 쿼리
+    const user_id = userId;
+
+    console.log('POST /point/add - All required fields are present');
+
     const sql = 'INSERT INTO point (user_id, point, description) VALUES (?, ?, ?)';
     pool.query(sql, [user_id, point, description], (err, results) => {
         if (err) {
-            console.error(`POST /point/add - Error inserting user: ${err.message}`);
+            console.error(`POST /point/add - Database Error: ${err.message}`);
             return res.status(500).send('Error inserting user');
         }
-        console.log('POST /point/add - User added successfully');
+        console.log('POST /point/add - Point added successfully');
         res.send('Point added successfully');
     });
 });

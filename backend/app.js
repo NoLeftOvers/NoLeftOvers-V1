@@ -1,4 +1,3 @@
-// 깃액션 테스트 푸시 -> 성현
 const express = require('express');
 const app = express();
 const menuRoutes = require('./routes/menu');
@@ -8,7 +7,7 @@ const imageRoutes = require('./routes/image');
 
 const { swaggerUi, specs } = require('./swagger/swagger');
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // '10mb'는 최대 10MB까지 허용하도록 설정
 
 // API 라우트 설정
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
