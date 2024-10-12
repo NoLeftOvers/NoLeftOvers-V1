@@ -137,7 +137,7 @@ router.post('/upload', async (req, res) => {
         else if (leftSection === 4) point = 0;
         else if (leftSection === 5) point = -1;
 
-        // 성공적으로 분석한 결과를 클라이언트에게 반환
+        // 성공적으로 분석한 결과를 클라이언트에게 반환함
         res.json({
             message: 'Image uploaded and analyzed successfully',
             analysisResult: {
