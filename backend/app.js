@@ -3,7 +3,7 @@ const app = express();
 const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
-const imageRoutes = require('./routes/image');
+// const imageRoutes = require('./routes/image');
 
 const { swaggerUi, specs } = require('./swagger/swagger');
 
@@ -13,7 +13,7 @@ app.use(express.json({ limit: '10mb' })); // '10mb'는 최대 10MB까지 허용�
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
 app.use('/api/point', pointRoutes); // /api/point/~ 경로로 포인트 라우트를 설정
 app.use('/api/menu', menuRoutes); // /api/menu/~ 경로로 식단 라우트를 설정
-app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
+// app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
@@ -24,7 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
  */
 
 /**
- * @path {GET} http://localhost:8000/
+ * @path {GET} http://13.209.118.89:80000
  * @description 요청 데이터 값이 없고 반환 값이 있는 GET Method
  */
 
