@@ -11,6 +11,7 @@ RUN npm install
 # 필요한 라이브러리 설치
 RUN apt-get update && apt-get install -y \
     libvips-dev \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # 앱 소스 추가

@@ -46,7 +46,7 @@ jobs:
           context: ./backend
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ env.DOCKER_IMAGE }}:latest
+          tags: ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}, ${{ env.DOCKER_IMAGE }}:latest
 
   # 배포 Job
   deploy:
@@ -65,11 +65,11 @@ jobs:
           docker stop ${{ env.NAME }} || true
           docker rm ${{ env.NAME }} || true
           docker rmi ${{ env.DOCKER_IMAGE }}:latest || true
-          docker run -d -p 80:8000 --name go_cicd --restart always \
+          docker run -d -p 80:8000 --name ${{ env.NAME }} --restart always \
             -e RDS_HOST=${{ secrets.RDS_HOST }} \
             -e RDS_PORT=${{ secrets.RDS_PORT }} \
             -e RDS_USER=${{ secrets.RDS_USER }} \
             -e RDS_PASSWORD=${{ secrets.RDS_PASSWORD }} \
             -e RDS_DB_NAME=${{ secrets.RDS_DB_NAME }} \
             -e OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
-            ${{ env.DOCKER_IMAGE }}:latest
+            ${{ env.DOCKER_IMAGE }}:${{ env.VERSION }}
