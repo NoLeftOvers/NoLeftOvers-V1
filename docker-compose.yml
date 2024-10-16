@@ -1,6 +1,28 @@
 version: '3'
 services:
   front:
+    image: ${DOCKER_HUB_USERNAME}/noleftovers:frontend-${VERSION}
+    ports:
+      - '80:3000'
+
+  back:
+    image: ${DOCKER_HUB_USERNAME}/noleftovers:backend-${VERSION}
+    ports:
+      - '8000:8000'
+    environment:
+      RDS_HOST: ${RDS_HOST}
+      RDS_PORT: ${RDS_PORT}
+      RDS_USER: ${RDS_USER}
+      RDS_PASSWORD: ${RDS_PASSWORD}
+      RDS_DB_NAME: ${RDS_DB_NAME}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    restart: always
+
+
+
+version: '3'
+services:
+  front:
     build:
       context: ./frontend
       dockerfile: Dockerfile

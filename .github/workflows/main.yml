@@ -62,8 +62,11 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Deploy with Docker Compose
         run: |
+          cd ~/noleftovers  # docker-compose.yml 파일이 있는 경로로 변경
           docker-compose down || true
           docker-compose pull
+          echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" >> .env
+          echo "VERSION=${{ github.sha }}" >> .env
           echo "RDS_HOST=${{ secrets.RDS_HOST }}" >> .env
           echo "RDS_PORT=${{ secrets.RDS_PORT }}" >> .env
           echo "RDS_USER=${{ secrets.RDS_USER }}" >> .env
