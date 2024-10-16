@@ -73,16 +73,15 @@ jobs:
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}"
       - name: Deploy with Docker Compose
         run: |
-          cd ~/noleftovers  # docker-compose.yml 파일이 있는 경로로 변경
+          cd /home/ubuntu/noleftovers  # docker-compose.yml 파일이 있는 경로로 변경
           docker-compose down || true
           docker-compose pull
-          echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" >> .env
-          echo "VERSION=${{ github.sha }}" >> .env
-          echo "RDS_HOST=${{ secrets.RDS_HOST }}" >> .env
-          echo "RDS_PORT=${{ secrets.RDS_PORT }}" >> .env
-          echo "RDS_USER=${{ secrets.RDS_USER }}" >> .env
-          echo "RDS_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> .env
-          echo "RDS_DB_NAME=${{ secrets.RDS_DB_NAME }}" >> .env
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
-          cat .env  # .env 파일 내용을 출력하여 확인
+          echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > ~/noleftovers/.env
+          echo "VERSION=${{ github.sha }}" >> ~/noleftovers/.env
+          echo "RDS_HOST=${{ secrets.RDS_HOST }}" >> ~/noleftovers/.env
+          echo "RDS_PORT=${{ secrets.RDS_PORT }}" >> ~/noleftovers/.env
+          echo "RDS_USER=${{ secrets.RDS_USER }}" >> ~/noleftovers/.env
+          echo "RDS_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> ~/noleftovers/.env
+          echo "RDS_DB_NAME=${{ secrets.RDS_DB_NAME }}" >> ~/noleftovers/.env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> ~/noleftovers/.env
           docker-compose up -d
