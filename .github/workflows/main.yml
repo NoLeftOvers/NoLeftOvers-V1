@@ -84,4 +84,5 @@ jobs:
           echo "RDS_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> .env
           echo "RDS_DB_NAME=${{ secrets.RDS_DB_NAME }}" >> .env
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
+          cat .env  # .env 파일 내용을 출력하여 확인
           docker-compose up -d
