@@ -1,13 +1,18 @@
-# 사용할 이미지 선택
+# Backend Dockerfile
 FROM node:16
-# 워킹 디렉토리 설정
+
+# 작업 디렉토리 설정
 WORKDIR /usr/src/app
-# 앱 소스 추가
-COPY . .
-# 앱 의존성 복사 및 설치 
+
+# 의존성 파일 복사 및 설치
 COPY package*.json ./
 RUN npm install
-# 포트바인딩
+
+# 전체 소스 코드 복사
+COPY . .
+
+# 포트 노출
 EXPOSE 8000
-# 명령문 삽입
+
+# 서버 시작 명령어
 CMD ["node", "app.js"]
