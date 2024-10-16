@@ -13,9 +13,10 @@ COPY . .
 
 # 빌드
 RUN npm run build
+RUN npm run export  # 정적 파일로 export
 
 # Nginx로 서빙
 FROM nginx:alpine
-COPY --from=build /usr/src/app/build /usr/share/nginx/html
+COPY --from=build /usr/src/app/out /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
