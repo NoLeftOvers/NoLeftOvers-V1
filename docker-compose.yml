@@ -16,6 +16,10 @@ services:
       RDS_PASSWORD: ${RDS_PASSWORD}
       RDS_DB_NAME: ${RDS_DB_NAME}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SSS_ACCESS_KEY: ${SSS_ACCESS_KEY}
+      SSS_SECRET_KEY: ${SSS_SECRET_KEY}
+      SSS_REGION: ${SSS_REGION}
+      SSS_BUCKET: ${SSS_BUCKET}
     restart: always
 
 
