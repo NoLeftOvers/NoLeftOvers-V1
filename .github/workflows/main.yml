@@ -71,6 +71,10 @@ jobs:
           export RDS_PASSWORD='${{ secrets.RDS_PASSWORD }}'
           export RDS_DB_NAME='${{ secrets.RDS_DB_NAME }}'
           export OPENAI_API_KEY='${{ secrets.OPENAI_API_KEY }}'
+          export SSS_ACCESS_KEY='${{ secrets.SSS_ACCESS_KEY }}'
+          export SSS_SECRET_KEY='${{ secrets.SSS_SECRET_KEY }}'
+          export SSS_REGION='${{ secrets.SSS_REGION }}'
+          export SSS_BUCKET='${{ secrets.SSS_BUCKET }}'
 
           cd /home/ubuntu/noleftovers
           docker-compose down || true
