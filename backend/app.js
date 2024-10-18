@@ -5,6 +5,7 @@ const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
 const imageRoutes = require('./routes/image');
+const authRoutes = require('./routes/auth');
 
 require('dotenv').config();
 const { swaggerUi, specs } = require('./swagger/swagger');
@@ -26,6 +27,7 @@ app.use(cors(corsOptions));
 app.use(express.json()); // 요청 body를 JSON으로 파싱
 
 // API 라우트 설정
+app.use('/api/auth', authRoutes); // /api/auth/~ 경로로 유저 라우트를 설정
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
 app.use('/api/point', pointRoutes); // /api/point/~ 경로로 포인트 라우트를 설정
 app.use('/api/menu', menuRoutes); // /api/menu/~ 경로로 식단 라우트를 설정

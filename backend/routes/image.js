@@ -13,6 +13,54 @@ const s3Client = new S3Client({
     },
 });
 
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: S3에 이미지를 업로드하고 OCR을 수행합니다.
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: formData
+ *         name: file
+ *         type: file
+ *         description: 업로드할 이미지 파일
+ *     responses:
+ *       200:
+ *         description: 파일이 성공적으로 업로드되고 OCR이 처리되었습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: 파일이 업로드되고 OCR 처리가 성공적으로 완료되었습니다.
+ *                 ocrResult:
+ *                   type: object
+ *                   description: OCR 처리 결과
+ *       400:
+ *         description: 잘못된 요청 - 업로드된 파일이 없습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: 업로드된 파일이 없습니다.
+ *       500:
+ *         description: 서버 오류 - 업로드 실패
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: S3 업로드 실패.
+ */
+
 router.post('/upload', async (req, res) => {
     const upload = multer({ storage: multer.memoryStorage() }).single('file');
 
