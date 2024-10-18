@@ -1,10 +1,8 @@
-
-const { S3Client, DeleteObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
 const multer = require('multer');
-const multerS3 = require('multer-s3');
 const uuid = require('uuid4');
 const express = require('express');
-const axios = require('axios');
+const { default: analyzeImage } = require('../services/analyzeImage');
 const router = express.Router(); // Express Router 추가
 
 const s3Client = new S3Client({
@@ -15,9 +13,8 @@ const s3Client = new S3Client({
     },
 });
 
-router.post('/upload', (req, res) => {
+router.post('/upload', async (req, res) => {
     const upload = multer({ storage: multer.memoryStorage() }).single('file');
-    const { userId } = req.body;
 
     upload(req, res, async (err) => {
         if (err) {
@@ -31,19 +28,10 @@ router.post('/upload', (req, res) => {
 
         const fileName = `${Date.now().toString()}_${uuid()}_${req.file.originalname}`;
 
-        const uploadParams = {
-            Bucket: process.env.SSS_BUCKET,
-            Key: fileName,
-            Body: req.file.buffer,
-            ACL: 'public-read',
-            ContentType: req.file.mimetype,
-        };
-
         try {
-            const data = await s3Client.send(new PutObjectCommand(uploadParams));
             const imageUrl = `https://${process.env.SSS_BUCKET}.s3.${process.env.SSS_REGION}.amazonaws.com/${fileName}`;
             // 서버 내부의 /ocr로 이미지 URL과 함께 POST 요청 전송
-            const ocrResponse = await axios.post(`${process.env.SERVER_INTERNAL_URL}/api/ocr`, { imageUrl });
+            const ocrResponse = await analyzeImage(imageUrl);
 
             // 클라이언트에게 OCR 결과 전달
             res.status(200).send({
@@ -83,5 +71,3 @@ router.post('/delete', async (req, res) => {
 });
 
 module.exports = router;
-
-
