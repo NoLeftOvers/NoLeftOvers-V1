@@ -4,7 +4,7 @@ const openai = new OpenAI({
 });
 
 // GPT-4를 사용해 이미지를 분석하는 함수
-export default analyzeImage = async (imageUrl) => {
+const analyzeImage = async (imageUrl) => {
     if (!imageUrl) {
         throw new Error('Image URL is required.');
     }
@@ -50,3 +50,5 @@ export default analyzeImage = async (imageUrl) => {
         throw new Error('Failed to analyze image');
     }
 };
+
+module.exports = analyzeImage;
