@@ -259,7 +259,7 @@ router.get(`/point`, (req, res) => {
     const userId = req.query.userId;
     console.log('GET /user/point - Fetching all users');
 
-    const sql = 'SELECT id, name, nickName, school_number, points FROM user WHERE id = ?';
+    const sql = 'SELECT point, description, created_at FROM point WHERE user_id = ? ORDER BY created_at DESC';
 
     pool.query(sql, [userId], (err, results) => {
         if (err) {

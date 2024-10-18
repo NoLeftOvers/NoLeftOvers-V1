@@ -1,35 +1,39 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
-
-const ocrRoutes = require('./routes/ocr');
 const imageRoutes = require('./routes/image');
-require('dotenv').config();
 
+require('dotenv').config();
 const { swaggerUi, specs } = require('./swagger/swagger');
 
-app.use(express.json({ limit: '10mb' })); // '10mb'는 최대 10MB까지 허용하도록 설정
+// CORS 설정
+const whitelist = ['http://localhost:3000'];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+            callback(null, true); // CORS 허용
+        } else {
+            callback(new Error('Not Allowed Origin!')); // CORS 비허용
+        }
+    },
+};
+
+// 미들웨어 설정
+app.use(cors(corsOptions));
+app.use(express.json()); // 요청 body를 JSON으로 파싱
 
 // API 라우트 설정
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
 app.use('/api/point', pointRoutes); // /api/point/~ 경로로 포인트 라우트를 설정
 app.use('/api/menu', menuRoutes); // /api/menu/~ 경로로 식단 라우트를 설정
-app.use('/api/ocr', ocrRoutes); // /api/image/~ 경로로 ocr 라우트를 설정
 app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
-
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
 /**
- * 파라미터 변수 뜻
- * req : request 요청
- * res : response 응답
- */
-
-/**
- * @path {GET} http://13.209.118.89:80000
+ * @path {GET} http://13.209.118.89:8000
  * @description 요청 데이터 값이 없고 반환 값이 있는 GET Method
  */
 
