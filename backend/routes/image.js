@@ -1,10 +1,7 @@
-
-const { S3Client, DeleteObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
+const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
 const multer = require('multer');
-const multerS3 = require('multer-s3');
 const uuid = require('uuid4');
 const express = require('express');
-const axios = require('axios');
 const { default: analyzeImage } = require('../services/analyzeImage');
 const router = express.Router(); // Express Router 추가
 
@@ -18,7 +15,6 @@ const s3Client = new S3Client({
 
 router.post('/upload', async (req, res) => {
     const upload = multer({ storage: multer.memoryStorage() }).single('file');
-    const { userId } = req.body;
 
     upload(req, res, async (err) => {
         if (err) {
@@ -31,14 +27,6 @@ router.post('/upload', async (req, res) => {
         }
 
         const fileName = `${Date.now().toString()}_${uuid()}_${req.file.originalname}`;
-
-        const uploadParams = {
-            Bucket: process.env.SSS_BUCKET,
-            Key: fileName,
-            Body: req.file.buffer,
-            ACL: 'public-read',
-            ContentType: req.file.mimetype,
-        };
 
         try {
             const imageUrl = `https://${process.env.SSS_BUCKET}.s3.${process.env.SSS_REGION}.amazonaws.com/${fileName}`;
@@ -83,5 +71,3 @@ router.post('/delete', async (req, res) => {
 });
 
 module.exports = router;
-
-
