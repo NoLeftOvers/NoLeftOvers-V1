@@ -19,6 +19,7 @@ test
 # 환경 설정 파일
 .env
 .env.local
+.env.development
 .env.production
 
 # Git 관련
