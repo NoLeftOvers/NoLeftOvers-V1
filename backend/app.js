@@ -3,7 +3,10 @@ const app = express();
 const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
-// const imageRoutes = require('./routes/image');
+
+const ocrRoutes = require('./routes/ocr');
+const imageRoutes = require('./routes/image');
+require('dotenv').config();
 
 const { swaggerUi, specs } = require('./swagger/swagger');
 
@@ -13,7 +16,9 @@ app.use(express.json({ limit: '10mb' })); // '10mb'는 최대 10MB까지 허용�
 app.use('/api/user', userRoutes); // /api/user/~ 경로로 유저 라우트를 설정
 app.use('/api/point', pointRoutes); // /api/point/~ 경로로 포인트 라우트를 설정
 app.use('/api/menu', menuRoutes); // /api/menu/~ 경로로 식단 라우트를 설정
-// app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
+app.use('/api/ocr', ocrRoutes); // /api/image/~ 경로로 ocr 라우트를 설정
+app.use('/api/image', imageRoutes); // /api/image/~ 경로로 이미지 라우트를 설정
+
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
