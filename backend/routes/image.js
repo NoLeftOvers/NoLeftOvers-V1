@@ -1,9 +1,10 @@
-const { S3Client, DeleteObjectCommand } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
+const { S3Client } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
 const multer = require('multer');
 const uuid = require('uuid4');
 const express = require('express');
-const { default: analyzeImage } = require('../services/analyzeImage');
-const router = express.Router(); // Express Router 추가
+const { analyzeImage } = require('../services/analyzeImage');
+const { authenticateToken } = require('../services/jwt');
+const router = express.Router();
 
 const s3Client = new S3Client({
     region: process.env.SSS_REGION,
@@ -15,53 +16,148 @@ const s3Client = new S3Client({
 
 /**
  * @swagger
- * /upload:
- *   post:
- *     summary: S3에 이미지를 업로드하고 OCR을 수행합니다.
- *     consumes:
- *       - multipart/form-data
- *     parameters:
- *       - in: formData
- *         name: file
- *         type: file
- *         description: 업로드할 이미지 파일
+ * /user:
+ *   get:
+ *     summary: 모든 유저 데이터를 조회합니다.
+ *     tags: [User]
  *     responses:
  *       200:
- *         description: 파일이 성공적으로 업로드되고 OCR이 처리되었습니다.
+ *         description: 성공적으로 유저 데이터를 가져왔습니다.
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: 파일이 업로드되고 OCR 처리가 성공적으로 완료되었습니다.
- *                 ocrResult:
- *                   type: object
- *                   description: OCR 처리 결과
- *       400:
- *         description: 잘못된 요청 - 업로드된 파일이 없습니다.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: 업로드된 파일이 없습니다.
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     example: "홍길동"
+ *                   nickName:
+ *                     type: string
+ *                     example: "gildong123"
+ *                   school_number:
+ *                     type: string
+ *                     example: "20231234"
+ *                   password:
+ *                     type: string
+ *                     example: "$2b$10$..."
+ *                   points:
+ *                     type: number
+ *                     example: 150
  *       500:
- *         description: 서버 오류 - 업로드 실패
+ *         description: 서버 오류로 인해 데이터를 가져오지 못했습니다.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: S3 업로드 실패.
+ *               type: string
+ *               example: 'Error fetching users'
  */
 
-router.post('/upload', async (req, res) => {
+/**
+ * @swagger
+ * /user/rank:
+ *   get:
+ *     summary: 포인트 순으로 유저 랭킹을 조회합니다.
+ *     tags: [User]
+ *     responses:
+ *       200:
+ *         description: 성공적으로 유저 포인트 랭킹을 가져왔습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     example: "홍길동"
+ *                   nickName:
+ *                     type: string
+ *                     example: "gildong123"
+ *                   school_number:
+ *                     type: string
+ *                     example: "20231234"
+ *                   points:
+ *                     type: number
+ *                     example: 150
+ *       500:
+ *         description: 서버 오류로 인해 데이터를 가져오지 못했습니다.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: 'Error fetching user points ranking'
+ */
+
+/**
+ * @swagger
+ * /user/point:
+ *   get:
+ *     summary: 특정 유저의 포인트 내역을 조회합니다.
+ *     tags: [User]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: 조회할 유저의 ID
+ *     responses:
+ *       200:
+ *         description: 성공적으로 유저의 포인트 내역을 가져왔습니다.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 nickName:
+ *                   type: string
+ *                   example: "gildong123"
+ *                 totalPoints:
+ *                   type: number
+ *                   example: 150
+ *                 pointHistory:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       point:
+ *                         type: number
+ *                         example: 100
+ *                       description:
+ *                         type: string
+ *                         example: "프로모션 참여 보상"
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-01-23T18:25:43.511Z"
+ *       400:
+ *         description: 필수 파라미터가 누락되었습니다.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: 'Missing userId parameter'
+ *       404:
+ *         description: 유저를 찾을 수 없습니다.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: 'User not found'
+ *       500:
+ *         description: 서버 오류로 인해 데이터를 가져오지 못했습니다.
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: 'Error fetching user points'
+ */
+
+// 업로드 요청 전에 토큰 검증 미들웨어를 추가
+router.post('/upload', authenticateToken, async (req, res) => {
     const upload = multer({ storage: multer.memoryStorage() }).single('file');
 
     upload(req, res, async (err) => {
@@ -78,44 +174,23 @@ router.post('/upload', async (req, res) => {
 
         try {
             const imageUrl = `https://${process.env.SSS_BUCKET}.s3.${process.env.SSS_REGION}.amazonaws.com/${fileName}`;
-            // 서버 내부의 /ocr로 이미지 URL과 함께 POST 요청 전송
+
+            console.log('Before analyzing image'); // 여기에 로그 추가
+
+            // analyzeImage 호출
             const ocrResponse = await analyzeImage(imageUrl);
 
-            // 클라이언트에게 OCR 결과 전달
+            console.log('After analyzing image'); // 여기에 로그 추가
+
             res.status(200).send({
                 message: 'File uploaded and OCR processed successfully.',
-                ocrResult: ocrResponse.data, // OCR 결과 반환
+                ocrResult: ocrResponse.data,
             });
         } catch (error) {
             console.error('S3 upload failed:', error);
             res.status(500).send({ error: 'Failed to upload to S3.' });
         }
     });
-});
-
-// 이미지 삭제 처리
-router.post('/delete', async (req, res) => {
-    const { fileKey } = req.body; // 삭제할 파일의 키를 요청 본문에서 받아옴
-
-    if (!fileKey) {
-        return res.status(400).send({ error: 'File key is required.' }); // 파일 키가 없을 경우 에러 반환
-    }
-
-    try {
-        // S3에서 이미지 삭제
-        const data = await s3Client.send(
-            new DeleteObjectCommand({
-                Bucket: process.env.SSS_BUCKET, // S3 Bucket의 이름
-                Key: fileKey, // 삭제할 파일의 키 (경로 및 파일 이름)
-            }),
-        );
-
-        console.log('Image Deleted:', fileKey); // 삭제 성공 시 로그 출력
-        return res.status(200).send({ message: 'Image deleted successfully.' });
-    } catch (err) {
-        console.error('Image deletion failed:', err); // 삭제 실패 시 에러 로그 출력
-        return res.status(500).send({ error: 'Failed to delete image.' });
-    }
 });
 
 module.exports = router;

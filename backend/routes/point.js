@@ -4,13 +4,6 @@ const pool = require('../db'); // pool 객체를 연결한 파일에서 불러�
 
 /**
  * @swagger
- * tags:
- *   name: Point
- *   description: 포인트 추가 및 조회
- */
-
-/**
- * @swagger
  * /point/add:
  *   post:
  *     summary: 유저의 포인트를 추가합니다.
@@ -22,7 +15,7 @@ const pool = require('../db'); // pool 객체를 연결한 파일에서 불러�
  *           schema:
  *             type: object
  *             properties:
- *               user_id:
+ *               userId:
  *                 type: integer
  *                 description: 유저의 ID
  *                 example: 123

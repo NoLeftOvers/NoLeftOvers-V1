@@ -20,7 +20,7 @@ const findUserBySchoolNumber = (schoolNumber) => {
             if (err) {
                 return reject(err);
             }
-            resolve(results[0]); // 결과가 배열로 반환되므로 첫 번째 요소만 반환
+            resolve(results[0]);
         });
     });
 };
