@@ -223,6 +223,7 @@ router.post('/login', async (req, res) => {
             maxAge: 3600000,
             secure: false, // HTTP에서도 전송 가능하도록 설정
             sameSite: 'Lax',
+            path: '/',
         });
         res.json({ message: '성공적으로 로그인 되었습니다.', user, token });
     } catch (err) {
