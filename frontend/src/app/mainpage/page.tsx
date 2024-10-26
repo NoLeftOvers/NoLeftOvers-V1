@@ -1,12 +1,12 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const MenuPage = () => {
     const [menuData, setMenuData] = useState({
-        gyo: null,
-        bi: null,
-        gick: null,
+        gyo: [],
+        bi: [],
+        gick: [],
     });
     const [loading, setLoading] = useState(true);
 
@@ -14,9 +14,9 @@ const MenuPage = () => {
     const fetchAllMenuData = async () => {
         try {
             const responses = await Promise.all([
-                axios.get('http://localhost:8000/menu', { params: { restaurantType: 'gyo' } }),
-                axios.get('http://localhost:8000/menu', { params: { restaurantType: 'bi' } }),
-                axios.get('http://localhost:8000/menu', { params: { restaurantType: 'gick' } }),
+                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'gyo' } }),
+                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'bi' } }),
+                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'gick' } }),
             ]);
 
             setMenuData({
@@ -36,59 +36,63 @@ const MenuPage = () => {
         fetchAllMenuData();
     }, []);
 
+    // 특정 식당의 메뉴 데이터를 시간대별로 간단히 렌더링하는 함수
+    const renderMenuByTime = (menuList) => {
+        if (!menuList || menuList.length === 0) {
+            return <p>데이터가 없습니다</p>;
+        }
+
+        const times = ["아침", "점심", "저녁"];
+        
+        return (
+            <div className="flex flex-col items-start gap-2">
+                {times.map((time) => {
+                    const menuForTime = menuList.find(menu => menu.meal_time === time);
+                    return (
+                        <div key={time} className="flex">
+                            <h3 className="text-base font-bold mr-4 w-16">{time}</h3>
+                            {menuForTime ? (
+                                <p className="text-gray-700 flex-1">{menuForTime.dishes.join(', ')}</p>
+                            ) : (
+                                <p className="text-gray-700 flex-1">데이터가 없습니다</p>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
     if (loading) {
         return <div>로딩 중...</div>; // 데이터가 로딩 중일 때 표시
     }
 
     return (
-                <div className="flex flex-col gap-6 p-4">
-
-                    {/* 교대 식단표 */}
-                    <div className="bg-gray-300 rounded-lg p-16 shadow-md h-50 flex flex-col justify-center items-center">
-                        <h2 className="text-center text-xl font-bold">교대 식단표</h2>
-                        {menuData.gyo ? (
-                            <div className="text-center">
-                                <p>날짜: {menuData.gyo.date}</p>
-                                <p>요일: {menuData.gyo.day_of_week}</p>
-                                <p>식사 시간: {menuData.gyo.meal_time}</p>
-                                <p>메뉴: {menuData.gyo.dishes}</p>
-                            </div>
-                        ) : (
-                            <p>데이터가 없습니다</p>
-                        )}
-                    </div>
-
-                    {/* 비타 식단표 */}
-                    <div className="bg-gray-300 rounded-lg p-16 shadow-md h-50 flex flex-col justify-center items-center">
-                        <h2 className="text-center text-xl font-bold">비타 식단표</h2>
-                        {menuData.bi ? (
-                            <div className="text-center">
-                                <p>날짜: {menuData.bi.date}</p>
-                                <p>요일: {menuData.bi.day_of_week}</p>
-                                <p>식사 시간: {menuData.bi.meal_time}</p>
-                                <p>메뉴: {menuData.bi.dishes}</p>
-                            </div>
-                        ) : (
-                            <p>데이터가 없습니다</p>
-                        )}
-                    </div>
-
-                    {/* 3식 식단표 */}
-                    <div className="bg-gray-300 rounded-lg p-16 shadow-md h-50 flex flex-col justify-center items-center">
-                        <h2 className="text-center text-xl font-bold">3식 식단표</h2>
-                        {menuData.gick ? (
-                            <div className="text-center">
-                                <p>날짜: {menuData.gick.date}</p>
-                                <p>요일: {menuData.gick.day_of_week}</p>
-                                <p>식사 시간: {menuData.gick.meal_time}</p>
-                                <p>메뉴: {menuData.gick.dishes}</p>
-                            </div>
-                        ) : (
-                            <p>데이터가 없습니다</p>
-                        )}
-                    </div>
-
+        <div className="flex flex-col gap-6 p-4">
+            {/* 교대 식단표 */}
+            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+                <h2 className="text-lg font-bold mb-2 text-center">교대 식단표</h2>
+                <div className="w-full flex flex-col items-start">
+                    {renderMenuByTime(menuData.gyo)}
                 </div>
+            </div>
+
+            {/* 비타 식단표 */}
+            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+                <h2 className="text-lg font-bold mb-2 text-center">비타 식단표</h2>
+                <div className="w-full flex flex-col items-start">
+                    {renderMenuByTime(menuData.bi)}
+                </div>
+            </div>
+
+            {/* 3식 식단표 */}
+            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+                <h2 className="text-lg font-bold mb-2 text-center">3식 식단표</h2>
+                <div className="w-full flex flex-col items-start">
+                    {renderMenuByTime(menuData.gick)}
+                </div>
+            </div>
+        </div>
     );
 };
 
