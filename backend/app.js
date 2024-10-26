@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const cookieParser = require('cookie-parser');
 const menuRoutes = require('./routes/menu');
 const userRoutes = require('./routes/user');
 const pointRoutes = require('./routes/point');
@@ -25,6 +26,7 @@ const corsOptions = {
 // 미들웨어 설정
 app.use(cors(corsOptions));
 app.use(express.json()); // 요청 body를 JSON으로 파싱
+app.use(cookieParser());
 
 // API 라우트 설정
 app.use('/api/auth', authRoutes); // /api/auth/~ 경로로 유저 라우트를 설정
