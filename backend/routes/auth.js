@@ -218,7 +218,12 @@ router.post('/login', async (req, res) => {
 
         // 'token' 이라는 쿠키 이름으로 토큰 저장, 'httpOnly' 옵션으로 접근 보호
         // 'maxAge' 옵션을 3600000(1시간, 밀리초) 설정
-        res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
+        res.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 3600000,
+            secure: false, // HTTP에서도 전송 가능하도록 설정
+            sameSite: 'Lax',
+        });
         res.json({ message: '성공적으로 로그인 되었습니다.', user, token });
     } catch (err) {
         console.error(`POST /auth/login - Error: ${err.message}`);

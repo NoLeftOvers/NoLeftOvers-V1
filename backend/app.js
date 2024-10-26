@@ -21,6 +21,7 @@ const corsOptions = {
             callback(new Error('Not Allowed Origin!')); // CORS 비허용
         }
     },
+    credentials: true,
 };
 
 // 미들웨어 설정
