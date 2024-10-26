@@ -73,14 +73,14 @@ const bcrypt = require('bcrypt');
  *           schema:
  *             type: object
  *             properties:
- *               schoolNumber:
+ *               school_number:
  *                 type: string
  *                 example: "20231234"
  *               password:
  *                 type: string
  *                 example: "password123"
  *             required:
- *               - schoolNumber
+ *               - school_number
  *               - password
  *     responses:
  *       200:
@@ -96,9 +96,29 @@ const bcrypt = require('bcrypt');
  *                 user:
  *                   type: object
  *                   properties:
- *                     schoolNumber:
+ *                     id:
+ *                       type: integer
+ *                       example: 8
+ *                     name:
+ *                       type: string
+ *                       example: "지민성"
+ *                     nickName:
+ *                       type: string
+ *                       example: "지민"
+ *                     school_number:
  *                       type: string
  *                       example: "20231234"
+ *                     points:
+ *                       type: integer
+ *                       example: 0
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-10-24T10:31:02.000Z"
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2024-10-24T10:31:02.000Z"
  *                 token:
  *                   type: string
  *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
@@ -125,10 +145,13 @@ const bcrypt = require('bcrypt');
  *       500:
  *         description: "서버 오류로 인해 로그인 중 문제가 발생했습니다."
  *         content:
- *           text/plain:
+ *           application/json:
  *             schema:
- *               type: string
- *               example: "로그인 중 오류가 발생했습니다."
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "로그인 중 오류가 발생했습니다."
  */
 
 /// POST 요청: 유저 등록 (회원가입)
