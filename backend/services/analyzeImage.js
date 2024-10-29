@@ -29,11 +29,11 @@ const analyzeImage = async (imageUrl) => {
 
     // 이미지 분석 프롬프트 작성
     const imageAnalysisPrompt = `
-        주어진 base64 이미지 데이터를 설명하고, 오직 각 섹션에서 남아 있는 음식물의 수를 추정해주세요. 
-        - description: 이미지에 대한 간단한 설명
-        - leftSection: 남아 있는 음식물 섹션 수 (0에서 5 사이의 정수)
-        - point: 남은 음식물이 적을수록 높은 점수로 20에서 -1 사이의 점수로 평가해주세요.
-    `;
+    주어진 base64 이미지를 보고 다음 정보를 추정해주세요:
+    - description: 이미지의 남은 음식물 상태를 20자 이내의 한국어로 평가 (예: "고기가 맛있어 보여요!", "더 드셔야겠는걸요?")
+    - leftSection: 남은 음식물 섹션 수 (0에서 5 사이의 정수로, 0이 남은 게 없는 상태)
+    - point: 남은 음식물이 적을수록 높은 점수로 20에서 -1 사이로 평가
+`;
 
     try {
         const response = await openai.chat.completions.create({

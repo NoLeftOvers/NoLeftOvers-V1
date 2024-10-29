@@ -1,4 +1,3 @@
-
 'use client';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -29,6 +28,7 @@ const UserProfile = () => {
 
     useEffect(() => {
         const fetchUserData = async () => {
+            const token = Cookies.get('token');
             if (!userId) {
                 console.error('User ID not found in cookies');
                 return;
@@ -40,6 +40,7 @@ const UserProfile = () => {
                     {
                         headers: {
                             Accept: 'application/json',
+                            Authorization: `Bearer ${token}`,
                         },
                     },
                 );
@@ -106,4 +107,3 @@ const UserProfile = () => {
 };
 
 export default UserProfile;
-
