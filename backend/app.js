@@ -12,7 +12,7 @@ require('dotenv').config();
 const { swaggerUi, specs } = require('./swagger/swagger');
 
 // CORS 설정
-const whitelist = ['http://localhost:3000'];
+const whitelist = ['http://localhost:3000', 'http://13.209.118.89'];
 const corsOptions = {
     origin: function (origin, callback) {
         if (!origin || whitelist.indexOf(origin) !== -1) {
