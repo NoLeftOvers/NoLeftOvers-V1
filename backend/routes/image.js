@@ -187,7 +187,7 @@ router.post('/upload', authenticateToken, async (req, res) => {
                 ocrResult: ocrResponse.data,
             });
         } catch (error) {
-            console.error('S3 upload failed:', error);
+            console.error('upload failed:', error.message);
             res.status(500).send({ error: 'Failed to upload to S3.' });
         }
     });
