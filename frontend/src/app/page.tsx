@@ -23,9 +23,11 @@ const LoginPage = () => {
     // 폼 제출 핸들러
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(`1 : ${process.env.NEXT_PUBLIC_SERVER_URL}`)
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`, {
+                console.log(`2 : ${process.env.NEXT_PUBLIC_SERVER_URL}`)
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
