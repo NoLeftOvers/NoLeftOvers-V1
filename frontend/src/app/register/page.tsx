@@ -43,7 +43,7 @@ const RegisterPage = () => {
         }
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`, {
+            const response = await fetch(`http://back:8000/api/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

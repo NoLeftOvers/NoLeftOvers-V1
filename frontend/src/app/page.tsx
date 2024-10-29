@@ -25,7 +25,7 @@ const LoginPage = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`, {
+            const response = await fetch(`http://back:8000/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

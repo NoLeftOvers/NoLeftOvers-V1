@@ -35,15 +35,12 @@ const UserProfile = () => {
             }
 
             try {
-                const response = await axios.get<UserData>(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/user/point?userId=${userId}`,
-                    {
-                        headers: {
-                            Accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
+                const response = await axios.get<UserData>(`http://back:8000/api/user/point?userId=${userId}`, {
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${token}`,
                     },
-                );
+                });
                 setUserData(response.data);
             } catch (error) {
                 console.error('Error fetching user profile:', error);

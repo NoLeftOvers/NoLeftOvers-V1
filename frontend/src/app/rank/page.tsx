@@ -1,4 +1,3 @@
-
 'use client';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -16,7 +15,7 @@ const UserRank = () => {
         // 컴포넌트가 마운트될 때 데이터를 가져옴
         const fetchRankData = async () => {
             try {
-                const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/rank`, {
+                const response = await axios.get(`http://back:8000/api/user/rank`, {
                     headers: {
                         Accept: 'application/json',
                     },
@@ -123,4 +122,3 @@ const UserRank = () => {
 };
 
 export default UserRank;
-
