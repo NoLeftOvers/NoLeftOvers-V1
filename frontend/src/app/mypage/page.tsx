@@ -3,9 +3,21 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 
+interface PointHistoryEntry {
+    description: string;
+    created_at: string; // 날짜를 string으로 정의
+    point: number;
+}
+
+interface UserData {
+    nickName: string;
+    totalPoints: number;
+    pointHistory: PointHistoryEntry[];
+}
+
 const UserProfile = () => {
-    const [userData, setUserData] = useState({
-        nickName: "닉네임",
+    const [userData, setUserData] = useState<UserData>({
+        nickName: '닉네임',
         totalPoints: 0,
         pointHistory: [],
     });
@@ -22,11 +34,14 @@ const UserProfile = () => {
             }
 
             try {
-                const response = await axios.get(`http://13.209.118.89:8000/api/user/point?userId=${userId}`, {
-                    headers: {
-                        Accept: 'application/json',
+                const response = await axios.get<UserData>(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/user/point?userId=${userId}`,
+                    {
+                        headers: {
+                            Accept: 'application/json',
+                        },
                     },
-                });
+                );
                 setUserData(response.data);
             } catch (error) {
                 console.error('Error fetching user profile:', error);
@@ -75,7 +90,9 @@ const UserProfile = () => {
                             <li key={index} className="bg-gray-300 rounded-lg p-4 shadow-md flex justify-between">
                                 <div>
                                     <p className="font-bold">{entry.description}</p>
-                                    <p className="text-sm text-gray-600">{new Date(entry.created_at).toLocaleDateString()}</p>
+                                    <p className="text-sm text-gray-600">
+                                        {new Date(entry.created_at).toLocaleDateString()}
+                                    </p>
                                 </div>
                                 <p className="font-bold text-primary">+{entry.point}P</p>
                             </li>

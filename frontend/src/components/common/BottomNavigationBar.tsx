@@ -11,14 +11,14 @@ const BottomNavigationBar = () => {
     const router = useRouter();
     const [value, setValue] = useState();
 
-    const handleNavigation = (path) => {
+    const handleNavigation = (path: string) => {
         router.push(path); // 지정된 경로로 이동
     };
 
     return (
         <BottomNavigation
             sx={{ backgroundColor: '#CBE8F9' }}
-            className="absolute bottom-0 w-[100%]"
+            className="absolute bottom-0 w-full"
             showLabels
             value={value}
             onChange={(event, newValue) => {
@@ -30,7 +30,11 @@ const BottomNavigationBar = () => {
                 icon={<Image src={rankIconUrl} alt="랭킹" />}
                 onClick={() => handleNavigation('/rank')} // /rank 경로로 이동
             />
-            <BottomNavigationAction className="bottom-[1em]" icon={<Image src={cameraIconUrl} alt="카메라" />} />
+            <BottomNavigationAction
+                label="잔반 검사 받기"
+                onClick={() => handleNavigation('/ai')} // /ai 경로로 이동
+                icon={<Image src={cameraIconUrl} alt="카메라" />}
+            />
             <BottomNavigationAction
                 label="마이페이지"
                 icon={<Image src={userIconUrl} alt="마이페이지" />}

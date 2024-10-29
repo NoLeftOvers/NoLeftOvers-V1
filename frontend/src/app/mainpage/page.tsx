@@ -1,9 +1,22 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const MenuPage = () => {
-    const [menuData, setMenuData] = useState({
+// 메뉴 아이템의 타입 정의
+interface MenuItem {
+    meal_time: string; // "아침", "점심", "저녁" 중 하나
+    dishes: string[]; // 각 식사 시간에 해당하는 음식 이름 배열
+}
+
+// MenuData의 타입 정의
+interface MenuData {
+    gyo: MenuItem[];
+    bi: MenuItem[];
+    gick: MenuItem[];
+}
+
+const MainPage = () => {
+    const [menuData, setMenuData] = useState<MenuData>({
         gyo: [],
         bi: [],
         gick: [],
@@ -14,11 +27,11 @@ const MenuPage = () => {
     const fetchAllMenuData = async () => {
         try {
             const responses = await Promise.all([
-                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'gyo' } }),
-                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'bi' } }),
-                axios.get('http://13.209.118.89:8000/api/menu', { params: { restaurantType: 'gick' } }),
+                axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/menu`, { params: { restaurantType: 'gyo' } }),
+                axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/menu`, { params: { restaurantType: 'bi' } }),
+                axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/menu`, { params: { restaurantType: 'gick' } }),
             ]);
-
+            console.log(responses);
             setMenuData({
                 gyo: responses[0].data,
                 bi: responses[1].data,
@@ -37,17 +50,17 @@ const MenuPage = () => {
     }, []);
 
     // 특정 식당의 메뉴 데이터를 시간대별로 간단히 렌더링하는 함수
-    const renderMenuByTime = (menuList) => {
+    const renderMenuByTime = (menuList: MenuItem[]) => {
         if (!menuList || menuList.length === 0) {
             return <p>데이터가 없습니다</p>;
         }
 
-        const times = ["아침", "점심", "저녁"];
-        
+        const times = ['아침', '점심', '저녁'];
+
         return (
             <div className="flex flex-col items-start gap-2">
                 {times.map((time) => {
-                    const menuForTime = menuList.find(menu => menu.meal_time === time);
+                    const menuForTime = menuList.find((menu) => menu.meal_time === time);
                     return (
                         <div key={time} className="flex">
                             <h3 className="text-base font-bold mr-4 w-16">{time}</h3>
@@ -68,32 +81,41 @@ const MenuPage = () => {
     }
 
     return (
-        <div className="flex flex-col gap-6 p-4">
+        <div className="flex flex-col gap-6 p-4 overflow-scroll h-[90%]">
             {/* 교대 식단표 */}
-            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+            <div
+                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
+                style={{
+                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
+                }}
+            >
                 <h2 className="text-lg font-bold mb-2 text-center">교대 식단표</h2>
-                <div className="w-full flex flex-col items-start">
-                    {renderMenuByTime(menuData.gyo)}
-                </div>
+                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.gyo)}</div>
             </div>
 
             {/* 비타 식단표 */}
-            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+            <div
+                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
+                style={{
+                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
+                }}
+            >
                 <h2 className="text-lg font-bold mb-2 text-center">비타 식단표</h2>
-                <div className="w-full flex flex-col items-start">
-                    {renderMenuByTime(menuData.bi)}
-                </div>
+                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.bi)}</div>
             </div>
 
             {/* 3식 식단표 */}
-            <div className="bg-gray-100 rounded-lg p-6 shadow-md shadow-gray-700 flex flex-col items-center gap-4">
+            <div
+                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
+                style={{
+                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
+                }}
+            >
                 <h2 className="text-lg font-bold mb-2 text-center">3식 식단표</h2>
-                <div className="w-full flex flex-col items-start">
-                    {renderMenuByTime(menuData.gick)}
-                </div>
+                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.gick)}</div>
             </div>
         </div>
     );
 };
 
-export default MenuPage;
+export default MainPage;

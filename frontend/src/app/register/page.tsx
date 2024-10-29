@@ -5,7 +5,7 @@ import logoUrl from '@/assets/Logo.png';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const page = () => {
+const RegisterPage = () => {
     const router = useRouter(); // 페이지 이동을 위한 useRouter hook 사용
     const [formData, setFormData] = useState({
         name: '',
@@ -19,7 +19,7 @@ const page = () => {
     const [registrationSuccess, setRegistrationSuccess] = useState(false); // 회원가입 성공 여부
 
     // 입력 값 변경 핸들러
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
 
         // schoolNumber 필드가 숫자만 입력되도록 제한
@@ -33,9 +33,9 @@ const page = () => {
     };
 
     // 폼 제출 핸들러
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        console.log(process.env.SERVER_URL);
         // 비밀번호 확인 로직
         if (formData.password !== formData.confirmPassword) {
             setMessage('비밀번호가 일치하지 않습니다.');
@@ -43,7 +43,7 @@ const page = () => {
         }
 
         try {
-            const response = await fetch('http://13.209.118.89:8000/api/auth/register', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const page = () => {
 
     return (
         <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e)}
             className="absolute top-[-5em] left-0 flex justify-center align-middle pl-10 pr-10 gap-10 box-border flex-col right-0 bottom-0 z-20 bg-blue-100"
         >
             <Image src={logoUrl} alt="로고" />
@@ -153,4 +153,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default RegisterPage;

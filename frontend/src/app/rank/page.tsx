@@ -2,14 +2,20 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+// 메뉴 아이템의 타입 정의
+interface RankData {
+    nickName: string;
+    points: number;
+}
+
 const UserRank = () => {
-    const [rankData, setRankData] = useState([]);
+    const [rankData, setRankData] = useState<RankData[]>([]);
 
     useEffect(() => {
         // 컴포넌트가 마운트될 때 데이터를 가져옴
         const fetchRankData = async () => {
             try {
-                const response = await axios.get('http://13.209.118.89:8000/api/user/rank', {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/rank`, {
                     headers: {
                         Accept: 'application/json',
                     },
@@ -22,28 +28,6 @@ const UserRank = () => {
 
         fetchRankData();
     }, []);
-
-    const renderRank = (rank, index, sizeClass = 'h-24') => {
-        // rank가 없을 경우 "데이터가 없습니다" 출력
-        if (!rank) {
-            return (
-                <div key={index} className={`bg-gray-300 rounded-lg p-8 shadow-md ${sizeClass} flex justify-center items-center`}>
-                    <p>데이터가 없습니다</p>
-                </div>
-            );
-        }
-
-        // rank가 있을 경우 데이터를 출력
-        return (
-            <div
-                key={index}
-                className={`bg-gray-300 rounded-lg p-8 shadow-md ${sizeClass} flex flex-col justify-center items-center`}
-            >
-                <p className="text-base font-semibold">{rank.nickName}</p>
-                <p className="text-sm">{rank.points}점</p>
-            </div>
-        );
-    };
 
     return (
         <div className="flex flex-col gap-6 p-4">
@@ -78,7 +62,8 @@ const UserRank = () => {
                             <span className="absolute top-0 left-1/2 transform -translate-x-1/2 text-lg font-bold">
                                 1위🏅
                             </span>
-                            <p className="mt-4 text-lg font-extrabold">{rankData[0].nickName}</p> {/* 1위 닉네임 크기 키움 */}
+                            <p className="mt-4 text-lg font-extrabold">{rankData[0].nickName}</p>{' '}
+                            {/* 1위 닉네임 크기 키움 */}
                             <p className="text-lg">{rankData[0].points}점</p>
                         </>
                     ) : (

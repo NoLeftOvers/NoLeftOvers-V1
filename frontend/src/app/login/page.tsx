@@ -5,27 +5,27 @@ import logoUrl from '@/assets/Logo.png';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-const page = () => {
+const LoginPage = () => {
     const [formData, setFormData] = useState({
         schoolNumber: '',
-        password: ''
+        password: '',
     });
-    
+
     const [message, setMessage] = useState('');
     const router = useRouter();
 
     // 입력 값 변경 핸들러
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
     };
 
     // 폼 제출 핸들러
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://13.209.118.89:8000/api/auth/login', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ const page = () => {
 
             if (response.status === 200) {
                 setMessage(`로그인 성공! 메인페이지로 이동합니다.`);
-                
+
                 // 로그인 성공 후 토큰과 사용자 ID를 쿠키에 저장
                 document.cookie = `token=${data.token}; path=/; max-age=3600; secure; SameSite=Strict`;
                 document.cookie = `userId=${data.user.id}; path=/; max-age=3600; secure; SameSite=Strict`;
@@ -58,7 +58,7 @@ const page = () => {
 
     return (
         <form
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e)}
             className="absolute top-[-5em] left-0 flex justify-center align-middle pl-10 pr-10 gap-10 box-border flex-col right-0 bottom-0 z-20 bg-blue-100"
         >
             <Image src={logoUrl} alt="로고" />
@@ -83,9 +83,9 @@ const page = () => {
             <Button variant="contained" type="submit" sx={{ fontSize: '1rem' }}>
                 로그인
             </Button>
-            {message && <div className='text-center mt-2'>{message}</div>}
+            {message && <div className="text-center mt-2">{message}</div>}
         </form>
     );
 };
 
-export default page;
+export default LoginPage;
