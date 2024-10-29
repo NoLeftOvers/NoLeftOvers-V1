@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import '../style/globals.css';
 import Logo from '@/components/common/Logo';
 import BottomNavigationBar from '@/components/common/BottomNavigationBar';
+import BackNavigation from '@/components/common/BackButton';
 
 const pretendard = localFont({
     src: '../style/fonts/PretendardVariable.woff2',
@@ -26,6 +27,7 @@ export default function RootLayout({
         <html lang="en">
             <body className={`${pretendard.variable} pt-32  antialiased relative`}>
                 <AppRouterCacheProvider>
+                    <BackNavigation />
                     {/* 이후 로그인 시에만 아래의 네비게이션 바가 생기도록 , 방식은 다양*/}
                     <Logo />
                     {children}
