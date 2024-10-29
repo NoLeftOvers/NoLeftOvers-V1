@@ -76,6 +76,7 @@ jobs:
           export SSS_REGION='${{ secrets.SSS_REGION }}'
           export SSS_BUCKET='${{ secrets.SSS_BUCKET }}'
           export JWT_SECRET_KEY='${{ secrets.JWT_SECRET_KEY }}'
+          export NEXT_PUBLIC_SERVER_URL='${{ secrets.NEXT_PUBLIC_SERVER_URL }}'
 
           cd /home/ubuntu/noleftovers
           docker-compose down || true
