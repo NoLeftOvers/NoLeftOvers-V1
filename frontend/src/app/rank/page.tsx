@@ -15,7 +15,7 @@ const UserRank = () => {
         // 컴포넌트가 마운트될 때 데이터를 가져옴
         const fetchRankData = async () => {
             try {
-                const response = await axios.get(`http://back:8000/api/user/rank`, {
+                const response = await axios.get(`http://13.209.118.89:8000/api/user/rank`, {
                     headers: {
                         Accept: 'application/json',
                     },

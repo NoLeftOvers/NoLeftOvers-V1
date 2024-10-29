@@ -27,9 +27,9 @@ const MainPage = () => {
     const fetchAllMenuData = async () => {
         try {
             const responses = await Promise.all([
-                axios.get(`http://back:8000/api/menu`, { params: { restaurantType: 'gyo' } }),
-                axios.get(`http://back:8000/api/menu`, { params: { restaurantType: 'bi' } }),
-                axios.get(`http://back:8000/api/menu`, { params: { restaurantType: 'gick' } }),
+                axios.get(`http://13.209.118.89:8000/api/menu`, { params: { restaurantType: 'gyo' } }),
+                axios.get(`http://13.209.118.89:8000/api/menu`, { params: { restaurantType: 'bi' } }),
+                axios.get(`http://13.209.118.89:8000/api/menu`, { params: { restaurantType: 'gick' } }),
             ]);
             console.log(responses);
             setMenuData({

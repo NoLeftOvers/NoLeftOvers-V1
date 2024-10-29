@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const getPoint = (point: number, userId: number, description: string) => {
-    axios.post(`http://back:8000/api/point/add`, {
+    axios.post(`http://13.209.118.89:8000/api/point/add`, {
         point,
         userId,
         description,
@@ -22,7 +22,7 @@ export const getOcr = async (file: object, userId: number) => {
     const token = Cookies.get('token');
     try {
         const response = await axios.post<GetOcrResponse>(
-            `http://back:8000/api/image/upload`,
+            `http://13.209.118.89:8000/api/image/upload`,
             { file },
             {
                 headers: {
