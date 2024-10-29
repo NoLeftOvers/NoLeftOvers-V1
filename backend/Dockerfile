@@ -1,5 +1,5 @@
 # Backend Dockerfile
-FROM node:16
+FROM node:20
 
 # 작업 디렉토리 설정
 WORKDIR /usr/src/app
