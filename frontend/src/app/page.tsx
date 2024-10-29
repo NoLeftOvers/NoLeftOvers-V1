@@ -26,9 +26,9 @@ const LoginPage = () => {
 
         try {
             console.log('http://back:8000')
-            console.log(http://back:8000)
+            console.log(`http://back:8000`)
             console.log('${NEXT_PUBLIC_SERVER_URL}/auth/login')
-            console.log(${NEXT_PUBLIC_SERVER_URL}/auth/login)
+            console.log(`${process.env.NEXT_PUBLIC_SERVER_URL}/auth/login`)
             const response = await fetch(`/api/auth/login`, {
                 method: 'POST',
                 headers: {
