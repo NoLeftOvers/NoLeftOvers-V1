@@ -1,8 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-    env: {
-        NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
-    },
-};
+import withPWAInit from 'next-pwa';
 
-export default nextConfig;
+const withPWA = withPWAInit({
+    dest: 'public',
+});
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+export default withPWA(nextConfig);

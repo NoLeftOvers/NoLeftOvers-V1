@@ -30,7 +30,7 @@ const UserRank = () => {
     }, []);
 
     return (
-        <div className="flex flex-col gap-6 p-4">
+        <div className="flex flex-col gap-6 p-4 overflow-y-scroll h-[90%]">
             <h2 className="text-center text-xl font-bold">유저 포인트 랭킹</h2>
 
             {/* 상위 3위 표시 */}

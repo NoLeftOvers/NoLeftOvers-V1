@@ -58,7 +58,7 @@ const UserProfile = () => {
     const { nickName, totalPoints, pointHistory } = userData;
 
     return (
-        <div className="w-full p-4">
+        <div className="w-full p-4  overflow-y-scroll pb-16 h-[90%]">
             {/* 닉네임 및 총 포인트 영역 */}
             <div className="mb-4 p-5 text-center bg-gray-300 rounded-lg shadow-md">
                 <h2 className="font-bold text-lg mb-4">{nickName}님</h2>
