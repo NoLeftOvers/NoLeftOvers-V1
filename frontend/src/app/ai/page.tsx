@@ -1,3 +1,4 @@
+
 'use client';
 import { Button } from '@mui/material';
 import Image from 'next/image';
@@ -74,3 +75,4 @@ const AiPage = () => {
 };
 
 export default AiPage;
+
