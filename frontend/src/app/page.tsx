@@ -42,8 +42,8 @@ const LoginPage = () => {
                 setMessage(`로그인 성공! 메인페이지로 이동합니다.`);
 
                 // 로그인 성공 후 토큰과 사용자 ID를 쿠키에 저장
-                document.cookie = `token=${data.token}; path=/; max-age=3600; secure; SameSite=Strict`;
-                document.cookie = `userId=${data.user.id}; path=/; max-age=3600; secure; SameSite=Strict`;
+                document.cookie = `token=${data.token}; path=/; max-age=3600; SameSite=Lax`;
+                document.cookie = `userId=${data.user.id}; path=/; max-age=3600; SameSite=Lax`;
 
                 // 로그인 성공 후 필요한 페이지로 리다이렉트
                 router.push('/mainpage'); // 예를 들어 대시보드 페이지로 이동
