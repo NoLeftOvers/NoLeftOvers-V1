@@ -11,26 +11,29 @@ const analyzeImage = async (imageUrl) => {
         throw new Error('Image URL is required.');
     }
 
-    const testPrompt = `
-        이미지는 base64 형식으로 인코딩되어 있습니다:  
-        ${imageUrl} , 당신은 이미지 인식이 안되는 모델이기 때문에, 해당 파일이 이미지인지 아닌지만 인식해주세요.
-    
-        하지만, 이것은 테스트이므로 이미지가 무엇인지 description에 저장하고,
-        point는 항상 2여야 합니다.
+    const prompt = `
+        ${imageUrl}  이미지는 식판 이미지로, 5개의 구역이 있습니다.
+        각 구역에 음식물이 남아 있는지 판단하여 "leftSection" 변수에 남은 음식이 있는 구역 수를 정수로 반환해 주세요.
+        테스트 목적으로 이 이미지를 분석하여 간단한 설명을 'description'에 작성하고,
+        'point' 값은 다음 규칙을 따릅니다:
+
+        남은 음식이 없는 경우 point = 20
+        1개의 구역에만 남은 경우 point = 15
+        2개의 구역에 남은 경우 point = 10
+        3개의 구역에 남은 경우 point = 5
+        4개의 구역에 남은 경우 point = 0
+        
+        예를 들어, "leftSection": 2, "description": "식판에 2개의 음식물 구역이 남음"과 같이 응답해 주세요.
+        이미지는 url 형식으로 인코딩되어 있습니다:  
     `;
 
     try {
-        // OpenAI API 요청 (GPT-4 모델 사용) --> 추후 변경 가능
         const response = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [{ role: 'user', content: testPrompt }],
+            model: 'gpt-4o-mini',
+            messages: [{ role: 'user', content: prompt }],
         });
 
         console.log(response); // 응답 로그 출력
-
-        // 분석 결과를 생성하는 가상 로직 (추후 실제 API 응답에 맞춰 수정)
-        let description = '식판 분석 테스트'; // description 변수 선언
-        let leftSection = 2; // leftSection 변수 선언
 
         // 잔반 수에 따른 점수 계산
         let point = 0;
