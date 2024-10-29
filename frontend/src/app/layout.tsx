@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={`${pretendard.variable}  antialiased`}>
+            <body className={`${pretendard.variable} pt-32  antialiased relative`}>
                 <AppRouterCacheProvider>
                     {/* 이후 로그인 시에만 아래의 네비게이션 바가 생기도록 , 방식은 다양*/}
                     <Logo />
