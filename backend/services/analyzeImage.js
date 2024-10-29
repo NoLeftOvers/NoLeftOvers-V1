@@ -1,57 +1,70 @@
 const OpenAI = require('openai');
+const fetch = require('node-fetch');
+const sharp = require('sharp');
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 // GPT-4를 사용해 이미지를 분석하는 함수
 const analyzeImage = async (imageUrl) => {
-    console.log('analyzeImage function loaded');
-
     if (!imageUrl) {
         throw new Error('Image URL is required.');
     }
 
-    const prompt = `
-        ${imageUrl}  이미지는 식판 이미지로, 5개의 구역이 있습니다.
-        각 구역에 음식물이 남아 있는지 판단하여 "leftSection" 변수에 남은 음식이 있는 구역 수를 정수로 반환해 주세요.
-        테스트 목적으로 이 이미지를 분석하여 간단한 설명을 'description'에 작성하고,
-        'point' 값은 다음 규칙을 따릅니다:
+    // URL에서 이미지를 다운로드하고 크기 축소 후 base64로 인코딩
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+        throw new Error('Failed to download image');
+    }
+    const buffer = await response.arrayBuffer();
 
-        남은 음식이 없는 경우 point = 20
-        1개의 구역에만 남은 경우 point = 15
-        2개의 구역에 남은 경우 point = 10
-        3개의 구역에 남은 경우 point = 5
-        4개의 구역에 남은 경우 point = 0
-        
-        예를 들어, "leftSection": 2, "description": "식판에 2개의 음식물 구역이 남음"과 같이 응답해 주세요.
-        이미지는 url 형식으로 인코딩되어 있습니다:  
+    // Sharp를 사용하여 이미지 크기 축소 및 변환
+    const resizedImageBuffer = await sharp(Buffer.from(buffer))
+        .resize(500) // 예: 너비를 500px로 조정 (크기 조정)
+        .jpeg({ quality: 70 }) // JPEG 압축 품질 설정
+        .toBuffer();
+
+    const base64Image = resizedImageBuffer.toString('base64');
+    console.log('Image downloaded, resized, and converted to base64 successfully.');
+
+    // 이미지 분석 프롬프트 작성
+    const imageAnalysisPrompt = `
+        주어진 base64 이미지 데이터를 설명하고, 오직 각 섹션에서 남아 있는 음식물의 수를 추정해주세요. 
+        - description: 이미지에 대한 간단한 설명
+        - leftSection: 남아 있는 음식물 섹션 수 (0에서 5 사이의 정수)
+        - point: 남은 음식물이 적을수록 높은 점수로 20에서 -1 사이의 점수로 평가해주세요.
     `;
 
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
-            messages: [{ role: 'user', content: prompt }],
+            model: 'gpt-4o',
+            messages: [
+                { role: 'system', content: '당신은 이미지 분석을 도와주는 사람입니다. 한국어로 답하세요' },
+                { role: 'user', content: `${imageAnalysisPrompt} 이미지 데이터: ${base64Image}` },
+            ],
+            max_tokens: 100,
         });
 
-        console.log(response); // 응답 로그 출력
+        // API 응답 확인 및 파싱
+        const content = response.choices[0].message.content;
+        console.log('API Response:', content);
 
-        // 잔반 수에 따른 점수 계산
-        let point = 0;
-        if (leftSection === 0) point = 20;
-        else if (leftSection === 1) point = 15;
-        else if (leftSection === 2) point = 10;
-        else if (leftSection === 3) point = 5;
-        else if (leftSection === 4) point = 0;
-        else if (leftSection === 5) point = -1;
+        // 문자열에서 데이터를 직접 추출
+        const descriptionMatch = content.match(/description: ([^\n]*)/);
+        const leftSectionMatch = content.match(/leftSection: (\d+)/);
+        const pointMatch = content.match(/point: (-?\d+)/);
 
-        // 결과 반환
+        const description = descriptionMatch ? descriptionMatch[1].trim() : 'No description provided';
+        const leftSection = leftSectionMatch ? parseInt(leftSectionMatch[1], 10) : null;
+        const point = pointMatch ? parseInt(pointMatch[1], 10) : null;
+
         return {
+            description,
             leftSection,
             point,
-            description,
         };
     } catch (error) {
-        console.error('Error analyzing image:', error);
+        console.error('Error analyzing image:', error.message);
         throw new Error('Failed to analyze image');
     }
 };

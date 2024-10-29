@@ -1,4 +1,4 @@
-const { S3Client } = require('@aws-sdk/client-s3'); // v3 모듈 가져오기
+const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const uuid = require('uuid4');
 const express = require('express');
@@ -6,14 +6,14 @@ const { analyzeImage } = require('../services/analyzeImage');
 const { authenticateToken } = require('../services/jwt');
 const router = express.Router();
 
-const s3Client = new S3Client({
+// S3 클라이언트 생성
+const s3 = new S3Client({
     region: process.env.SSS_REGION,
     credentials: {
         accessKeyId: process.env.SSS_ACCESS_KEY,
         secretAccessKey: process.env.SSS_SECRET_KEY,
     },
 });
-
 /**
  * @swagger
  * /user:
@@ -156,7 +156,6 @@ const s3Client = new S3Client({
  *               example: 'Error fetching user points'
  */
 
-// 업로드 요청 전에 토큰 검증 미들웨어를 추가
 router.post('/upload', authenticateToken, async (req, res) => {
     const upload = multer({ storage: multer.memoryStorage() }).single('file');
 
@@ -172,23 +171,35 @@ router.post('/upload', authenticateToken, async (req, res) => {
 
         const fileName = `${Date.now().toString()}_${uuid()}_${req.file.originalname}`;
 
+        const params = {
+            Bucket: process.env.SSS_BUCKET,
+            Key: fileName,
+            Body: req.file.buffer,
+            ContentType: req.file.mimetype,
+            ACL: 'public-read', // 필요에 따라 접근 권한 설정
+        };
+
         try {
+            // S3에 파일 업로드
+            const command = new PutObjectCommand(params);
+            await s3.send(command);
             const imageUrl = `https://${process.env.SSS_BUCKET}.s3.${process.env.SSS_REGION}.amazonaws.com/${fileName}`;
 
-            console.log('Before analyzing image'); // 여기에 로그 추가
+            console.log('Before analyzing image ' + imageUrl); // 업로드 후 분석 전 로그
 
-            // analyzeImage 호출
-            const ocrResponse = await analyzeImage(imageUrl);
+            // analyzeImage 호출 및 결과값 할당
+            const analysisResult = await analyzeImage(imageUrl);
 
-            console.log('After analyzing image'); // 여기에 로그 추가
-
+            console.log('After analyzing image'); // 분석 완료 후 로그
+            console.log(analysisResult);
+            // 분석 결과를 클라이언트에게 응답으로 전송
             res.status(200).send({
                 message: 'File uploaded and OCR processed successfully.',
-                ocrResult: ocrResponse.data,
+                ocrResult: analysisResult, // 분석 결과 포함
             });
         } catch (error) {
-            console.error('upload failed:', error.message);
-            res.status(500).send({ error: 'Failed to upload to S3.' });
+            console.error('Upload to S3 or image analysis failed:', error.message);
+            res.status(500).send({ error: 'Failed to upload to S3 or analyze image.' });
         }
     });
 });

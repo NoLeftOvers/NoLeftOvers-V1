@@ -11,11 +11,11 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:8000', // 요청 URL
+                url: 'http://13.209.118.89:8000/api', // 요청 URL
             },
         ],
     },
-    apis: ['././routes/*.js'], //Swagger 파일 연동
+    apis: ['../routes/*.js'], //Swagger 파일 연동
 };
 const specs = swaggereJsdoc(options);
 
