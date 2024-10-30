@@ -20,8 +20,8 @@ const analyzeImage = async (imageUrl) => {
 
     // Sharp를 사용하여 이미지 크기 축소 및 변환
     const resizedImageBuffer = await sharp(Buffer.from(buffer))
-        .resize(500) // 예: 너비를 500px로 조정 (크기 조정)
-        .jpeg({ quality: 70 }) // JPEG 압축 품질 설정
+        .resize(400) // 예: 너비를 500px로 조정 (크기 조정)
+        .jpeg({ quality: 80 }) // JPEG 압축 품질 설정
         .toBuffer();
 
     const base64Image = resizedImageBuffer.toString('base64');
@@ -29,7 +29,9 @@ const analyzeImage = async (imageUrl) => {
 
     // 이미지 분석 프롬프트 작성
     const imageAnalysisPrompt = `
-  주어진 식판 이미지를 보고 다음 정보를 추정해주세요:
+    사용자가 올린 이미지가 음식이 담기거나, 다먹은 식판 사진과 같다면 아래의 분석을 진행해주세요
+    주어진 식판 이미지를 보고 다음 정보를 추정해주세요:
+    - 모든 내용은 세밀하게 음식이 담겨있는지 분석하고 진행해주세요
     - description: 남은 음식물의 양에 따라 자연스럽게 칭찬하거나 꾸짖는 톤으로 30자 내외로 평가  (예: 남긴 게 적으면 "와, 정말 깔끔하게 드셨네요!", 많이 남기면 "이게 다 먹은 거에요?"와 같은 표현)
     - leftSection: 식판에서 남은 음식물 구역 수 (0에서 5 사이의 정수로, 0이 남은 게 없는 상태)
     - point: 남은 음식물이 적을수록 높은 점수로 20에서 -1 사이로 평가
