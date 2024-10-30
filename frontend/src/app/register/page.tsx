@@ -134,7 +134,7 @@ const RegisterPage = () => {
                     {registrationSuccess && (
                         <Button
                             variant="contained"
-                            onClick={() => router.push('/login')}
+                            onClick={() => router.push('/')}
                             sx={{
                                 fontSize: '1rem',
                                 marginTop: '0.5rem',
