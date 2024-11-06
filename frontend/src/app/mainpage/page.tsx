@@ -2,13 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// 메뉴 아이템의 타입 정의
 interface MenuItem {
-    meal_time: string; // "아침", "점심", "저녁" 중 하나
-    dishes: string[]; // 각 식사 시간에 해당하는 음식 이름 배열
+    meal_time: string;
+    dishes: string[];
 }
 
-// MenuData의 타입 정의
 interface MenuData {
     gyo: MenuItem[];
     bi: MenuItem[];
@@ -23,7 +21,6 @@ const MainPage = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    // 3개의 API 데이터를 불러오는 함수
     const fetchAllMenuData = async () => {
         try {
             const responses = await Promise.all([
@@ -31,7 +28,6 @@ const MainPage = () => {
                 axios.get(`http://13.209.118.89:8000/api/menu`, { params: { restaurantType: 'bi' } }),
                 axios.get(`http://13.209.118.89:8000/api/menu`, { params: { restaurantType: 'gick' } }),
             ]);
-            console.log(responses);
             setMenuData({
                 gyo: responses[0].data,
                 bi: responses[1].data,
@@ -44,30 +40,28 @@ const MainPage = () => {
         }
     };
 
-    // 컴포넌트가 처음 렌더링될 때 API 호출
     useEffect(() => {
         fetchAllMenuData();
     }, []);
 
-    // 특정 식당의 메뉴 데이터를 시간대별로 간단히 렌더링하는 함수
     const renderMenuByTime = (menuList: MenuItem[]) => {
         if (!menuList || menuList.length === 0) {
-            return <p>데이터가 없습니다</p>;
+            return <p className="text-gray-500 italic">데이터가 없습니다</p>;
         }
 
         const times = ['아침', '점심', '저녁'];
 
         return (
-            <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-4">
                 {times.map((time) => {
                     const menuForTime = menuList.find((menu) => menu.meal_time === time);
                     return (
-                        <div key={time} className="flex">
-                            <h3 className="text-base font-bold mr-4 w-16">{time}</h3>
+                        <div key={time} className="flex items-center gap-4">
+                            <h3 className="text-base font-semibold text-blue-600 w-20">{time}</h3>
                             {menuForTime ? (
-                                <p className="text-gray-700 flex-1">{menuForTime.dishes.join(', ')}</p>
+                                <p className="text-gray-800 w-full">{menuForTime.dishes.join(', ')}</p>
                             ) : (
-                                <p className="text-gray-700 flex-1">데이터가 없습니다</p>
+                                <p className="text-gray-400 w-full pl-1"> 아직 올라오지 않았어요</p>
                             )}
                         </div>
                     );
@@ -77,43 +71,30 @@ const MainPage = () => {
     };
 
     if (loading) {
-        return <div>로딩 중...</div>; // 데이터가 로딩 중일 때 표시
+        return (
+            <div className="flex justify-center items-center h-full">
+                <div className="loader"></div>
+            </div>
+        );
     }
 
     return (
-        <div className="flex flex-col gap-6 p-4 overflow-scroll h-[90%]">
-            {/* 교대 식단표 */}
-            <div
-                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
-                style={{
-                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
-                }}
-            >
-                <h2 className="text-lg font-bold mb-2 text-center">교대 식단표</h2>
-                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.gyo)}</div>
-            </div>
-
-            {/* 비타 식단표 */}
-            <div
-                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
-                style={{
-                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
-                }}
-            >
-                <h2 className="text-lg font-bold mb-2 text-center">비타 식단표</h2>
-                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.bi)}</div>
-            </div>
-
-            {/* 3식 식단표 */}
-            <div
-                className="bg-white rounded-lg p-6  flex flex-col items-center gap-4"
-                style={{
-                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
-                }}
-            >
-                <h2 className="text-lg font-bold mb-2 text-center">3식 식단표</h2>
-                <div className="w-full flex flex-col items-start">{renderMenuByTime(menuData.gick)}</div>
-            </div>
+        <div className="flex flex-col gap-8 p-6 h-[90%]  overflow-auto">
+            {['교대', '비타', '3생활관'].map((restaurant, index) => (
+                <div
+                    key={restaurant}
+                    className="bg-white rounded-lg p-8 shadow-md flex flex-col items-center gap-6"
+                    style={{
+                        boxShadow:
+                            '0 4px 8px rgba(0, 0, 0, 0.01), 0 -4px 8px rgba(0, 0, 0, 0.01), 4px 0 8px rgba(0, 0, 0, 0.01), -4px 0 8px rgba(0, 0, 0, 0.01)',
+                    }}
+                >
+                    <h2 className="text-xl font-semibold text-center text-blue-500">{restaurant} 식단표</h2>
+                    <div className="w-full text-start">
+                        {renderMenuByTime(menuData[index === 0 ? 'gyo' : index === 1 ? 'bi' : 'gick'])}
+                    </div>
+                </div>
+            ))}
         </div>
     );
 };

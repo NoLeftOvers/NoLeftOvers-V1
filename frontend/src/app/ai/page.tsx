@@ -1,5 +1,5 @@
 'use client';
-import { Button, CircularProgress } from '@mui/material';
+import { Button, CircularProgress, Typography, Box } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import { getOcr } from './api/AIResultAPI';
@@ -10,7 +10,7 @@ const AiPage = () => {
     const [source, setSource] = useState('');
     const [result, setResult] = useState(false);
     const [ocrData, setOcrData] = useState({ description: '', point: 0 });
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [loading, setLoading] = useState(false);
     const userId = Cookies.get('userId');
     const router = useRouter();
 
@@ -20,74 +20,95 @@ const AiPage = () => {
             const file = files[0];
             const newUrl = URL.createObjectURL(file);
             setSource(newUrl);
-            setLoading(true); // 로딩 시작
+            setLoading(true);
             try {
-                const response = await getOcr(file, Number(userId)); // OCR 응답을 받아옵니다.
-                setOcrData({ description: response.description, point: response.point }); // OCR 데이터 상태에 저장
+                const response = await getOcr(file, Number(userId));
+                setOcrData({ description: response.description, point: response.point });
                 setResult(true);
             } catch (error) {
                 console.error('OCR 처리 중 오류 발생:', error);
             } finally {
-                setLoading(false); // 로딩 종료
+                setLoading(false);
             }
         }
     };
 
     return (
-        <div className="flex w-[100%] justify-center">
-            <div className="flex flex-col w-[80%] gap-4 justify-center items-center">
-                <div
-                    className="min-h-[100px] flex justify-center items-center w-full"
-                    style={{
-                        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
-                    }}
-                >
-                    <input
-                        accept="image/*"
-                        id="icon-button-file"
-                        type="file"
-                        capture="environment"
-                        onChange={(e) => handleCapture(e)}
-                    />
-                </div>
+        <div className="w-full p-4  overflow-y-scroll pb-16 h-[90%]">
+            <Box display="flex" justifyContent="center" width="100%">
+                <Box display="flex" flexDirection="column" alignItems="center" gap={4} width="80%">
+                    <Box
+                        sx={{
+                            width: '100%',
+                            minHeight: 100,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                            borderRadius: 2,
+                            backgroundColor: '#f7f7f7',
+                        }}
+                    >
+                        <input
+                            accept="image/*"
+                            id="icon-button-file"
+                            type="file"
+                            capture="environment"
+                            onChange={handleCapture}
+                            style={{ padding: '10px' }}
+                        />
+                    </Box>
 
-                <div
-                    className="max-h-[300px] overflow-scroll"
-                    style={{
-                        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
-                    }}
-                >
-                    {source && <Image src={source} alt={'snap'} width="500" height="500"></Image>}
-                </div>
+                    <Box
+                        sx={{
+                            maxHeight: 300,
+                            overflow: 'auto',
+                            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                            borderRadius: 2,
+                        }}
+                    >
+                        {source && (
+                            <Image src={source} alt={'snap'} width={500} height={500} style={{ borderRadius: 8 }} />
+                        )}
+                    </Box>
 
-                {loading ? ( // 로딩 중일 때 표시
-                    <div className="flex justify-center items-center">
-                        <CircularProgress />
-                    </div>
-                ) : (
-                    result && (
-                        <div className="w-full flex flex-col gap-4 ">
-                            <div
-                                className="h-full min-h-[100px] flex justify-center items-center flex-col"
-                                style={{
-                                    boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.03), 0px -4px 4px rgba(0, 0, 0, 0.03)',
+                    {loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+                            <CircularProgress size={40} sx={{ color: '#1976d2' }} />
+                        </Box>
+                    ) : (
+                        result && (
+                            <Box
+                                display="flex"
+                                flexDirection="column"
+                                gap={2}
+                                alignItems="center"
+                                width="100%"
+                                p={2}
+                                sx={{
+                                    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+                                    borderRadius: 2,
+                                    backgroundColor: '#fafafa',
                                 }}
                             >
-                                <p>{ocrData.description}</p>
-                                <p>포인트 점수 : {ocrData.point}점</p>
-                            </div>
-                            <Button
-                                onClick={() => router.push('/mainpage')}
-                                variant="contained"
-                                type="submit"
-                                sx={{ fontSize: '0.8125rem' }}
-                            >
-                                홈으로 가기
-                            </Button>
-                        </div>
-                    )
-                )}
-            </div>
+                                <Typography variant="body1" color="textSecondary">
+                                    {ocrData.description}
+                                </Typography>
+                                <Typography variant="h6" color="textPrimary">
+                                    포인트 점수: {ocrData.point}점
+                                </Typography>
+                                <Button
+                                    onClick={() => router.push('/mainpage')}
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#74C6F5', fontSize: '0.8125rem', mt: 2 }}
+                                >
+                                    홈으로 가기
+                                </Button>
+                            </Box>
+                        )
+                    )}
+                </Box>
+            </Box>
         </div>
     );
 };

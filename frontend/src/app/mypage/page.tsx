@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 
 interface PointHistoryEntry {
     description: string;
-    created_at: string; // 날짜를 string으로 정의
+    created_at: string;
     point: number;
 }
 
@@ -23,8 +23,7 @@ const UserProfile = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    // 쿠키에서 userId 가져오기
-    const userId = Cookies.get('userId'); // 쿠키에 저장된 userId 가져오기
+    const userId = Cookies.get('userId');
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -58,45 +57,43 @@ const UserProfile = () => {
     const { nickName, totalPoints, pointHistory } = userData;
 
     return (
-        <div className="w-full p-4  overflow-y-scroll pb-16 h-[90%]">
-            {/* 닉네임 및 총 포인트 영역 */}
-            <div className="mb-4 p-5 text-center bg-gray-300 rounded-lg shadow-md">
-                <h2 className="font-bold text-lg mb-4">{nickName}님</h2>
-                {/* 총 포인트 부분 */}
-                <div className="flex items-center justify-between bg-white rounded-lg shadow-md p-4 mt-6">
-                    <div className="flex items-center space-x-2">
-                        {/* 아이콘 자리 */}
-                        <div className="w-6 h-6 bg-gray-300 rounded-full flex justify-center items-center">
-                            <span className="text-black text-xs">●</span>
+        <div className="w-full p-4 overflow-y-scroll pb-16 h-[90%] ">
+            <div className="mb-6 p-6 text-center bg-blue-50 rounded-lg shadow-lg">
+                <h2 className="font-bold text-2xl text-blue-800 mb-4">{nickName}님</h2>
+                <div className="flex items-center justify-between bg-white rounded-lg shadow-md p-5 mt-6">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-blue-200 rounded-full flex justify-center items-center">
+                            <span className="text-blue-800 font-bold">★</span>
                         </div>
-                        <span className="font-bold text-gray-700">총 포인트</span>
+                        <span className="font-bold text-blue-700 text-lg">총 포인트</span>
                     </div>
-                    <span className="text-blue-600 font-bold text-xl">{totalPoints}P</span>
+                    <span className="text-blue-600 font-extrabold text-2xl">{totalPoints}P</span>
                 </div>
             </div>
 
-            <br></br>
-            {/* 포인트 내역 영역 */}
             <div>
-                <h3 className="font-bold text-center text-lg mb-2">포인트 내역</h3>
+                <h3 className="font-semibold text-lg text-blue-800 text-center mb-3">포인트 내역</h3>
 
                 {loading ? (
-                    <p>로딩 중...</p>
+                    <p className="text-center text-blue-600">로딩 중...</p>
                 ) : pointHistory.length === 0 ? (
-                    <div className="bg-gray-300 rounded-lg p-8 text-center shadow-md">
+                    <div className="bg-blue-50 rounded-lg p-8 text-center shadow-md text-blue-700">
                         <p>데이터가 없습니다</p>
                     </div>
                 ) : (
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                         {pointHistory.map((entry, index) => (
-                            <li key={index} className="bg-gray-300 rounded-lg p-4 shadow-md flex justify-between">
+                            <li
+                                key={index}
+                                className="bg-white rounded-lg p-5 shadow-md flex justify-between items-center border-l-4 border-blue-300"
+                            >
                                 <div>
-                                    <p className="font-bold">{entry.description}</p>
-                                    <p className="text-sm text-gray-600">
+                                    <p className="font-semibold text-gray-800">{entry.description}</p>
+                                    <p className="text-xs text-gray-500">
                                         {new Date(entry.created_at).toLocaleDateString()}
                                     </p>
                                 </div>
-                                <p className="font-bold text-primary">+{entry.point}P</p>
+                                <p className="font-bold text-green-600 text-lg">+{entry.point}P</p>
                             </li>
                         ))}
                     </ul>
